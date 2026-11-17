@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#1e072e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="A Royal Romantic Love App Made Only For Fariya ❤️👑" />
+  <title>👑 FARIYA — MY PRINCESS ❤️</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --purple-deep: #160424;
+      --pink: #ff4d94;
+      --soft-pink: #ffc2dc;
+      --rose-gold: #f0b7a4;
+      --rose-gold-hi: #ffe0d6;
+      --red: #ff1e56;
+      --white: #fff8fc;
+      --gold: #ffd166;
+      --glass: rgba(42, 12, 62, 0.58);
+      --border: rgba(240, 183, 164, 0.35);
+      --fn-bn: 'Hind Siliguri', 'Noto Sans Bengali', system-ui, sans-serif;
+      --fn-en: 'Poppins', system-ui, sans-serif;
+      --fn-serif: 'Playfair Display', Georgia, serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: var(--purple-deep); color: var(--white); font-family: var(--fn-bn);
+    }
+    .app-bg {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255, 77, 148, 0.34), transparent 46%),
+        radial-gradient(circle at 86% 22%, rgba(255, 209, 102, 0.2), transparent 44%),
+        radial-gradient(circle at 50% 90%, rgba(255, 30, 86, 0.26), transparent 50%),
+        linear-gradient(155deg, #130420 0%, #2a0a42 48%, #1d0626 100%);
+    }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(58px); pointer-events: none; z-index: 0; opacity: 0.45;
+      animation: orbMove 11s ease-in-out infinite alternate;
+    }
+    .orb-1 { width: 240px; height: 240px; background: var(--pink); top: -70px; right: -60px; }
+    .orb-2 { width: 250px; height: 250px; background: #7b2cbf; bottom: -80px; left: -60px; animation-delay: -4s; }
+    .orb-3 { width: 170px; height: 170px; background: var(--gold); top: 46%; left: 10%; opacity: 0.16; }
+    @keyframes orbMove { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(-20px,22px) scale(1.12)} }
+
+    #ambientLayer { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 2; }
+    #fxCanvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 35; }
+
+    .p-heart { position: absolute; bottom: -40px; user-select: none; animation: floatHeart linear forwards; }
+    .p-petal { position: absolute; top: -40px; user-select: none; animation: fallPetal linear forwards; }
+    .p-butterfly {
+      position: absolute; left: -45px; user-select: none;
+      filter: drop-shadow(0 0 8px rgba(255, 194, 220, 0.75));
+      animation: flyButterfly linear forwards;
+    }
+    @keyframes floatHeart {
+      0%{transform:translateY(0) translateX(0) scale(.7);opacity:0} 15%{opacity:.9} 85%{opacity:.75}
+      100%{transform:translateY(-110vh) translateX(var(--dx,30px)) scale(1.2) rotate(var(--rot,20deg));opacity:0}
+    }
+    @keyframes fallPetal {
+      0%{transform:translateY(0) translateX(0) rotate(0);opacity:0} 15%{opacity:.9} 85%{opacity:.8}
+      100%{transform:translateY(112vh) translateX(var(--dx,-40px)) rotate(var(--rot,250deg));opacity:0}
+    }
+    @keyframes flyButterfly {
+      0%{transform:translate(0,0) scale(.85) rotate(-10deg);opacity:0} 15%{opacity:.95}
+      50%{transform:translate(55vw,-16vh) scale(1.1) rotate(8deg);opacity:1} 85%{opacity:.9}
+      100%{transform:translate(112vw,-30vh) scale(.95) rotate(-6deg);opacity:0}
+    }
+
+    /* Loading */
+    #loadingScreen {
+      position: fixed; inset: 0; z-index: 100;
+      background: radial-gradient(circle at center, #330b4f 0%, #140420 78%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; padding: 24px;
+      transition: opacity .6s ease, visibility .6s ease;
+    }
+    #loadingScreen.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-crown { font-size: 62px; filter: drop-shadow(0 0 24px rgba(255,209,102,.85)); animation: heartbeat 1.2s infinite; }
+    .loader-title {
+      font-family: var(--fn-serif); font-size: 1.45rem; letter-spacing: 2px; text-align: center;
+      background: linear-gradient(90deg, var(--rose-gold-hi), var(--gold), var(--soft-pink));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .loader-track { width: 210px; height: 5px; border-radius: 99px; background: rgba(255,255,255,.14); overflow: hidden; }
+    .loader-fill { width: 0; height: 100%; border-radius: 99px; background: linear-gradient(90deg,var(--pink),var(--gold),var(--red)); animation: loadRun 1.3s ease forwards; }
+    @keyframes loadRun { to { width: 100%; } }
+
+    /* Shell */
+    .app-shell {
+      position: relative; z-index: 6; width: 100%; max-width: 480px; height: 100dvh; margin: 0 auto;
+      display: flex; flex-direction: column;
+      padding: env(safe-area-inset-top, 10px) 14px env(safe-area-inset-bottom, 12px);
+    }
+    @media (min-width: 520px) {
+      .app-shell {
+        height: min(94dvh, 860px); margin-top: min(3dvh, 24px); border-radius: 34px;
+        border: 1px solid rgba(240,183,164,.3); background: rgba(24,5,40,.46);
+        box-shadow: 0 26px 75px rgba(0,0,0,.72), 0 0 46px rgba(255,77,148,.22); overflow: hidden;
+      }
+    }
+
+    /* Header */
+    .top-header { flex-shrink: 0; padding: 8px 4px 6px; display: flex; flex-direction: column; gap: 8px; z-index: 12; }
+    .top-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .brand-pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255,77,148,.22), rgba(255,209,102,.14));
+      border: 1px solid rgba(240,183,164,.38); backdrop-filter: blur(10px);
+      font-family: var(--fn-en); font-size: .71rem; font-weight: 600; color: var(--rose-gold-hi);
+    }
+    .top-actions { display: flex; align-items: center; gap: 6px; }
+    .icon-btn {
+      height: 34px; min-width: 34px; padding: 0 10px; border-radius: 999px;
+      border: 1px solid rgba(240,183,164,.32); background: rgba(255,255,255,.09); backdrop-filter: blur(10px);
+      color: var(--white); font-size: .86rem; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .icon-btn:active { transform: scale(.92); }
+    .icon-btn.active {
+      background: linear-gradient(135deg, rgba(255,77,148,.5), rgba(255,209,102,.35));
+      border-color: var(--gold); box-shadow: 0 0 14px rgba(255,77,148,.45);
+    }
+    .progress-meta { display: flex; justify-content: space-between; font-size: .76rem; color: var(--rose-gold-hi); padding: 0 2px; }
+    .step-badge { font-family: var(--fn-en); font-weight: 600; color: var(--gold); }
+    .progress-track { width: 100%; height: 6px; background: rgba(255,255,255,.12); border-radius: 99px; overflow: hidden; }
+    .progress-fill {
+      height: 100%; width: 6.66%; border-radius: 99px;
+      background: linear-gradient(90deg, var(--red), var(--pink), var(--rose-gold), var(--gold));
+      box-shadow: 0 0 12px rgba(255,77,148,.75); transition: width .5s cubic-bezier(.22,1,.36,1);
+    }
+
+    /* Music Drawer */
+    .music-drawer {
+      background: rgba(32,9,48,.9); border: 1px solid rgba(240,183,164,.35); border-radius: 18px;
+      padding: 10px 12px; backdrop-filter: blur(16px); display: none; flex-direction: column; gap: 8px;
+    }
+    .music-drawer.open { display: flex; }
+    .music-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .music-name { font-size: .78rem; color: var(--soft-pink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 165px; }
+    .music-chip {
+      border: 1px solid rgba(240,183,164,.38); background: rgba(255,77,148,.24);
+      color: #fff; padding: 5px 10px; border-radius: 99px; font-size: .75rem; cursor: pointer; font-family: var(--fn-bn);
+    }
+    .volume-row { display: flex; align-items: center; gap: 8px; font-size: .78rem; color: var(--rose-gold-hi); }
+    input[type="range"] { flex: 1; accent-color: var(--pink); height: 4px; cursor: pointer; }
+
+    /* Stage & Cards */
+    .stage {
+      flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center;
+      padding: 8px 0; overflow-y: auto; scrollbar-width: none;
+    }
+    .stage::-webkit-scrollbar { display: none; }
+    .step-card {
+      width: 100%; max-height: 100%; overflow-y: auto; scrollbar-width: none;
+      background: var(--glass); border: 1px solid var(--border); border-radius: 28px; padding: 22px 18px;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.2), 0 0 36px var(--glow, rgba(255,77,148,.26));
+      display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px;
+      animation: pageEnter .52s cubic-bezier(.22,1,.36,1);
+    }
+    .step-card::-webkit-scrollbar { display: none; }
+    @keyframes pageEnter { 0%{opacity:0;transform:translateY(20px) scale(.95)} 100%{opacity:1;transform:translateY(0) scale(1)} }
+
+    /* Step Themes */
+    .t-crown { --glow: rgba(255,209,102,.38); border-color: rgba(255,209,102,.5); }
+    .t-pink { --glow: rgba(255,77,148,.38); border-color: rgba(255,194,220,.45); }
+    .t-rosegold { --glow: rgba(240,183,164,.36); border-color: rgba(240,183,164,.48); }
+    .t-red { --glow: rgba(255,30,86,.4); border-color: rgba(255,107,139,.48); }
+    .t-violet { --glow: rgba(168,85,247,.38); border-color: rgba(216,180,254,.42); }
+    .t-finale {
+      --glow: rgba(255,209,102,.55); border-color: rgba(255,209,102,.6);
+      background: linear-gradient(165deg, rgba(64,12,72,.82), rgba(24,5,40,.9));
+    }
+
+    .emoji-halo {
+      display: inline-flex; gap: 8px; font-size: 1.22rem; padding: 6px 14px; border-radius: 99px;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); animation: floatSoft 3s ease-in-out infinite;
+    }
+    @keyframes floatSoft { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+    .hero-emblem {
+      font-size: 3.7rem; line-height: 1;
+      filter: drop-shadow(0 0 22px rgba(255,77,148,.8)); animation: heartbeat 1.35s ease-in-out infinite;
+    }
+    @keyframes heartbeat { 0%,100%{transform:scale(1)} 20%{transform:scale(1.14)} 35%{transform:scale(.98)} 55%{transform:scale(1.09)} }
+
+    .step-kicker { font-family: var(--fn-en); font-size: .71rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
+    .step-title {
+      font-size: 1.44rem; font-weight: 700; line-height: 1.35;
+      background: linear-gradient(120deg, #fff 10%, var(--soft-pink) 55%, var(--gold) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 24px rgba(255,77,148,.22);
+    }
+    .step-title.giant { font-size: 1.7rem; }
+    .step-msg { font-size: 1.02rem; line-height: 1.78; color: #fff0f7; }
+
+    .quote-box {
+      width: 100%; padding: 10px 14px; border-radius: 16px; background: rgba(255,255,255,.06);
+      border-left: 3px solid var(--gold); font-size: .85rem; font-style: italic; color: var(--rose-gold-hi); text-align: left;
+    }
+
+    /* Gift Box */
+    .gift-stage { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+    .gift-btn {
+      position: relative; width: 112px; height: 98px; background: none; border: none; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    }
+    .gift-btn.shake { animation: giftWiggle 2s infinite ease-in-out; }
+    @keyframes giftWiggle { 0%,82%,100%{transform:rotate(0) scale(1)} 86%{transform:rotate(-6deg) scale(1.05)} 90%{transform:rotate(6deg) scale(1.05)} 94%{transform:rotate(-4deg)} }
+    .gift-lid {
+      width: 104px; height: 24px; background: linear-gradient(135deg, var(--pink), var(--red));
+      border-radius: 8px; border: 2px solid var(--gold); position: relative; z-index: 2;
+      transition: transform .6s cubic-bezier(.34,1.56,.64,1);
+    }
+    .gift-lid::before { content: '🎀'; position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 1.7rem; }
+    .gift-body {
+      width: 92px; height: 60px; background: linear-gradient(160deg, var(--pink), #9d0b44);
+      border-radius: 0 0 12px 12px; border: 2px solid var(--gold); border-top: none; position: relative;
+      display: flex; justify-content: center; box-shadow: 0 12px 26px rgba(255,77,148,.48);
+    }
+    .gift-body::after { content: ''; position: absolute; width: 16px; height: 100%; background: linear-gradient(180deg, #ffe799, var(--gold)); }
+    .gift-btn.opened .gift-lid { transform: translateY(-28px) rotate(-14deg); }
+    .gift-reveal {
+      display: none; width: 100%; padding: 12px 14px; border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255,77,148,.24), rgba(255,209,102,.18));
+      border: 1px solid rgba(255,209,102,.5); color: #fff; font-size: .93rem; line-height: 1.65;
+    }
+    .gift-reveal.show { display: block; animation: pageEnter .45s ease; }
+
+    /* Kisses & Promises */
+    .kiss-burst { display: flex; gap: 10px; font-size: 1.7rem; animation: heartbeat 1.1s infinite; }
+    .promise-list { width: 100%; display: flex; flex-direction: column; gap: 7px; }
+    .promise-item {
+      padding: 8px 12px; border-radius: 14px; background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,209,102,.28); font-size: .86rem; color: var(--rose-gold-hi);
+      display: flex; align-items: center; gap: 8px; text-align: left;
+    }
+
+    /* Gallery */
+    .memory-controls { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+    .caption-input {
+      width: 100%; padding: 9px 12px; border-radius: 12px; border: 1px solid rgba(240,183,164,.38);
+      background: rgba(255,255,255,.08); color: #fff; font-family: var(--fn-bn); font-size: .86rem; outline: none;
+    }
+    .caption-input::placeholder { color: rgba(255,210,230,.6); }
+    .upload-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px 14px;
+      border-radius: 14px; border: 1px dashed rgba(255,209,102,.6); background: rgba(255,77,148,.18);
+      color: var(--rose-gold-hi); font-size: .88rem; font-weight: 600; cursor: pointer;
+    }
+    .memory-grid { width: 100%; display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; max-height: 210px; overflow-y: auto; }
+    .memory-card {
+      position: relative; background: rgba(255,255,255,.09); border: 1px solid rgba(240,183,164,.35);
+      border-radius: 14px; padding: 6px; display: flex; flex-direction: column; gap: 5px;
+    }
+    .memory-card img { width: 100%; height: 104px; object-fit: cover; border-radius: 10px; }
+    .memory-cap { font-size: .74rem; color: var(--soft-pink); line-height: 1.35; word-break: break-word; }
+    .memory-heart { position: absolute; bottom: 32px; left: 10px; font-size: .95rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,.6)); animation: heartbeat 1.4s infinite; }
+    .memory-del { position: absolute; top: 10px; right: 10px; width: 22px; height: 22px; border-radius: 50%; border: none; background: rgba(18,4,28,.8); color: #fff; font-size: .72rem; cursor: pointer; }
+    .empty-memory {
+      width: 100%; padding: 16px 12px; border-radius: 18px; background: rgba(255,255,255,.05);
+      border: 1px solid rgba(240,183,164,.22); display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%; padding: 14px 20px; border: none; border-radius: 18px;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--red) 55%, #b5179e 100%);
+      color: #fff; font-family: var(--fn-en); font-weight: 600; font-size: .96rem; cursor: pointer;
+      box-shadow: 0 10px 26px rgba(255,77,148,.48); position: relative; overflow: hidden;
+    }
+    .btn-primary::after {
+      content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent); animation: shimmer 2.8s infinite;
+    }
+    @keyframes shimmer { 0%{left:-100%} 45%,100%{left:150%} }
+    .btn-primary:active, .btn-soft:active { transform: scale(.97); }
+    .btn-soft {
+      width: 100%; padding: 13px 18px; border-radius: 18px; border: 1px solid rgba(255,209,102,.45);
+      background: rgba(255,255,255,.09); color: var(--rose-gold-hi); font-family: var(--fn-en); font-weight: 600; font-size: .92rem; cursor: pointer;
+    }
+    .finale-actions { width: 100%; display: flex; flex-direction: column; gap: 9px; }
+    .finale-response {
+      width: 100%; padding: 15px; border-radius: 20px;
+      background: linear-gradient(145deg, rgba(255,77,148,.24), rgba(255,209,102,.18));
+      border: 1px solid rgba(255,209,102,.52); animation: pageEnter .5s ease;
+    }
+
+    /* Bottom Nav */
+    .bottom-nav { flex-shrink: 0; padding: 8px 2px 4px; display: flex; justify-content: space-between; gap: 10px; z-index: 10; }
+    .nav-btn {
+      flex: 1; padding: 12px 16px; border-radius: 16px; border: 1px solid rgba(240,183,164,.28);
+      background: rgba(36,10,54,.76); backdrop-filter: blur(12px); color: var(--white);
+      font-family: var(--fn-bn); font-size: .95rem; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .nav-btn.next { background: linear-gradient(135deg, var(--pink), var(--red)); border-color: rgba(255,209,102,.45); box-shadow: 0 8px 20px rgba(255,77,148,.38); }
+    .nav-btn.hidden { visibility: hidden; pointer-events: none; }
+
+    /* Love Letter Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 80; background: rgba(12,3,22,.8); backdrop-filter: blur(10px);
+      display: none; align-items: center; justify-content: center; padding: 18px;
+    }
+    .modal-overlay.open { display: flex; }
+    .letter-card {
+      width: 100%; max-width: 410px; background: linear-gradient(165deg, #320b4a 0%, #190528 100%);
+      border: 1px solid rgba(255,209,102,.52); border-radius: 26px; padding: 24px 20px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.75), 0 0 36px rgba(255,77,148,.32);
+      position: relative; display: flex; flex-direction: column; gap: 12px; max-height: 84dvh; overflow-y: auto;
+      animation: pageEnter .4s ease;
+    }
+    .letter-close { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(240,183,164,.35); background: rgba(255,255,255,.1); color: #fff; cursor: pointer; }
+    .letter-head { font-size: 1.24rem; font-weight: 700; color: var(--gold); text-align: center; }
+    .letter-body { font-size: .96rem; line-height: 1.82; color: #fff0f7; white-space: pre-line; }
+    .letter-sign { text-align: right; font-weight: 700; color: var(--soft-pink); }
+
+    .toast {
+      position: fixed; bottom: 78px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: rgba(34,9,52,.94); border: 1px solid var(--pink); color: #fff;
+      padding: 8px 16px; border-radius: 99px; font-size: .82rem; z-index: 95; opacity: 0; pointer-events: none; transition: all .3s ease; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+  <div id="loadingScreen">
+    <div class="loader-crown">👑</div>
+    <div class="loader-title">FARIYA — MY PRINCESS ❤️</div>
+    <div style="font-size:.92rem; color:var(--soft-pink);">রাজকন্যার জন্য ভালোবাসার পৃথিবী সাজানো হচ্ছে... ✨🌹</div>
+    <div class="loader-track"><div class="loader-fill"></div></div>
+  </div>
+
+  <div class="app-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div id="ambientLayer"></div>
+  <canvas id="fxCanvas"></canvas>
+
+  <div class="app-shell">
+    <header class="top-header">
+      <div class="top-row">
+        <div class="brand-pill">👑 FARIYA — MY PRINCESS ❤️</div>
+        <div class="top-actions">
+          <button id="installBtn" class="icon-btn" style="display:none;" title="Install App">📲</button>
+          <button id="letterBtn" class="icon-btn" title="Love Letter">💌</button>
+          <button id="musicToggleBtn" class="icon-btn" title="Play/Pause Music">🎵</button>
+          <button id="musicDrawerBtn" class="icon-btn" title="Music Settings">⚙️</button>
+        </div>
+      </div>
+
+      <div id="musicDrawer" class="music-drawer">
+        <div class="music-row">
+          <span id="musicTrackName" class="music-name">🎶 Royal Love Melody</span>
+          <div style="display:flex; gap:6px;">
+            <button id="musicOnOffBtn" class="music-chip">Music: OFF</button>
+            <label class="music-chip">📁 গান দিন<input id="audioUploadInput" type="file" accept="audio/*" hidden /></label>
+          </div>
+        </div>
+        <div class="volume-row">
+          <span>🔉 Volume</span>
+          <input id="volumeSlider" type="range" min="0" max="1" step="0.05" value="0.6" />
+        </div>
+      </div>
+
+      <div class="progress-meta">
+        <span id="stepTitleMini">Welcome My Princess</span>
+        <span id="stepCounter" class="step-badge">STEP 01 / 15</span>
+      </div>
+      <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+    </header>
+
+    <main id="stage" class="stage"></main>
+
+    <footer id="bottomNav" class="bottom-nav">
+      <button id="prevBtn" class="nav-btn">⬅️ পিছনে</button>
+      <button id="nextBtn" class="nav-btn next">পরবর্তী ধাপ ➡️</button>
+    </footer>
+  </div>
+
+  <div id="letterModal" class="modal-overlay">
+    <div class="letter-card">
+      <button id="closeLetterBtn" class="letter-close">✕</button>
+      <div class="letter-head">💌 প্রিয় রাজকন্যা Fariya-র জন্য</div>
+      <div class="letter-body">আমার প্রাণপ্রিয় Fariya,
+
+তুমি শুধু আমার ভালোবাসা নও, তুমি আমার প্রতিদিনের সবচেয়ে সুন্দর অনুভূতি। তোমার হাসিতে আমার পৃথিবী আলোকিত হয়, আর তোমার একটুখানি উপস্থিতিই আমার মনকে প্রশান্ত করে তোলে।
+
+সারা জীবন এভাবেই তোমাকে যত্নে, সম্মানে আর অনেক ভালোবাসায় আগলে রাখতে চাই। 👑❤️🌹</div>
+      <div class="letter-sign">— শুধুই তোমার ভালোবাসার মানুষ ♾️💍</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <audio id="customAudio" loop></audio>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'fariya_princess_app_v1';
+      let state = { step: 1, giftOpened: false, finalReply: null, musicEnabled: false, volume: 0.6 };
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (saved && typeof saved === 'object') {
+          state = { ...state, ...saved };
+          if (state.step < 1 || state.step > 15) state.step = 1;
+        }
+      } catch (e) {}
+
+      const saveState = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} };
+
+      const STEPS = [
+        { id:1, theme:'t-crown', kicker:'STEP 01 • ROYAL WELCOME', mini:'Welcome My Princess 👑', emojis:'👑 ❤️ ✨ 🌹 🦋', emblem:'👑',
+          title:'Welcome Fariya, My Princess! ❤️',
+          msg:'তোমার জন্য আমার ছোট্ট একটা পৃথিবী তৈরি করেছি। যেখানে প্রতিটি অনুভূতিতে শুধু তুমি আছো।',
+          quote:'“তুমি আমার হৃদয়ের রাজ্যে এক ও অদ্বিতীয় রাজকন্যা।” 👑✨', isWelcome:true },
+        { id:2, theme:'t-pink', kicker:'STEP 02 • AMAR JAN', mini:'Fariya, Amar Jan 🥹', emojis:'🥹 💗 🫶 🌸 💕', emblem:'🥹',
+          title:'Fariya, Amar Jan 🥹',
+          msg:'জানো Fariya, তোমাকে কী নামে ডাকব বুঝতে পারি না। তুমি আমার জান, আমার মায়া, আমার সবচেয়ে প্রিয় অনুভূতি।',
+          quote:'“সব সুন্দর শব্দের চেয়েও সুন্দর হলো তোমার নাম—Fariya।” 💖' },
+        { id:3, theme:'t-red', kicker:'STEP 03 • ONE IN A MILLION', mini:'Why You Are Special ❤️', emojis:'❤️ 💘 ✨ 🌷 👑', emblem:'❤️',
+          title:'Why You Are Special ❤️',
+          msg:'পৃথিবীতে হাজারো মানুষ আছে, কিন্তু আমার চোখে তুমি আলাদা। তোমার মতো করে কেউ আমার মন ছুঁতে পারেনি।',
+          quote:'“তোমার বিশেষত্ব কোনো শব্দে নয়, আমার অনুভবে লেখা।” 💘' },
+        { id:4, theme:'t-rosegold', kicker:'STEP 04 • MY PRINCESS', mini:'My Beautiful Princess 🌹', emojis:'🌹 👑 😍 💐 🦋', emblem:'🌹',
+          title:'My Beautiful Princess 🌹',
+          msg:'তোমার হাসি, তোমার কথা, তোমার ছোট ছোট অভিমান—সবকিছু আমার কাছে অনেক সুন্দর।',
+          quote:'“তোমার প্রতিটি রূপই আমার কাছে ভীষণ মায়াময়।” 🌹✨' },
+        { id:5, theme:'t-violet', kicker:'STEP 05 • DEEPEST LOVE', mini:'I Love You So Much 💞', emojis:'💞 💖 💓 ♾️ ❤️', emblem:'💞',
+          title:'I Love You So Much 💞',
+          msg:'আমি তোমাকে কতটা ভালোবাসি, সেটা হয়তো হাজারটা শব্দ দিয়েও বোঝাতে পারব না। তুমি আমার হৃদয়ের খুব কাছের একজন।',
+          quote:'“ভালোবাসা যত গভীর হয়, শব্দ তত কম পড়ে যায়।” 💞' },
+        { id:6, theme:'t-pink', kicker:'STEP 06 • PURE JOY', mini:'Your Smile 🥰', emojis:'🥰 🌸 ☀️ 🦋 💗', emblem:'🥰',
+          title:'Your Smile 🥰',
+          msg:'তোমার হাসিটা যেন আমার পুরো দিনের সবচেয়ে সুন্দর মুহূর্ত। সবসময় এভাবেই হাসিখুশি থেকো আমার রাজকন্যা।',
+          quote:'“তোমার হাসিই আমার বেঁচে থাকার সবচেয়ে সুন্দর কারণ।” 🥰' },
+        { id:7, theme:'t-rosegold', kicker:'STEP 07 • MY HAPPINESS', mini:'My Happiness 💗', emojis:'💗 🎀 💌 ✨ 😊', emblem:'💗',
+          title:'My Happiness 💗',
+          msg:'তোমার একটা মেসেজ, একটু কথা, একটু সময়—আমার কাছে অনেক বড় আনন্দ।',
+          quote:'“সুখ খুব বড় কিছু নয়, তুমি পাশে থাকাই আমার সবচেয়ে বড় সুখ।” 🎀' },
+        { id:8, theme:'t-crown', kicker:'STEP 08 • SURPRISE BOX', mini:'A Little Surprise 🎁', emojis:'🎁 🎀 🧸 💖 ✨', emblem:'🎁',
+          title:'A Little Surprise 🎁',
+          msg:'তোমার জন্য একটি ছোট্ট সারপ্রাইজ রাখা আছে, নিচের গিফট বক্সে ট্যাপ করো আমার জান!',
+          quote:'“পৃথিবীর সবচেয়ে সুন্দর উপহারটি হলো আমাদের ভালোবাসা।” 🎁', hasGift:true },
+        { id:9, theme:'t-violet', kicker:'STEP 09 • MY FAVORITE', mini:'My Favorite Person 🧸', emojis:'🧸 💕 🥰 🦋 🫶', emblem:'🧸',
+          title:'My Favorite Person 🧸',
+          msg:'তোমার সঙ্গে কথা বলতে ভালো লাগে, তোমার গল্প শুনতে ভালো লাগে, এমনকি তোমার ছোট ছোট পাগলামিগুলোও আমার ভালো লাগে।',
+          quote:'“প্রিয় মানুষটির সব পাগলামিই পৃথিবীর সবচেয়ে মিষ্টি লাগে।” 🧸' },
+        { id:10, theme:'t-red', kicker:'STEP 10 • ENDLESS AFFECTION', mini:'A Thousand Kisses 😘', emojis:'😘 💋 ❤️ 💖 🌹', emblem:'😘',
+          title:'A Thousand Kisses 😘',
+          msg:'একটা নয়, হাজারটা ভালোবাসা আর অনেকগুলো আদর তোমার জন্য, আমার জান। 💋❤️',
+          quote:'“আমার প্রতিটি আদরে শুধু তোমারই নাম লেখা আছে।” 💋', hasKisses:true },
+        { id:11, theme:'t-crown', kicker:'STEP 11 • SACRED PROMISE', mini:'My Promise 💍', emojis:'💍 ♾️ 👑 💛 🫶', emblem:'💍',
+          title:'My Promise 💍',
+          msg:'আমি চাই তোমার সুখের সময় যেমন পাশে থাকতে, তেমনি মন খারাপের সময়ও তোমার কথা শুনতে। তোমার অনুভূতি ও স্বপ্নকে সবসময় সম্মান করব।',
+          quote:'“সম্মান, যত্ন আর ভালোবাসা—এই তিনেই গড়ে ওঠে চিরদিনের পথচলা।” 💍', hasPromise:true },
+        { id:12, theme:'t-pink', kicker:'STEP 12 • DREAM GALLERY', mini:'Our Dream Gallery 📸', emojis:'📸 💐 🌸 💖 😘', emblem:'📸',
+          title:'Our Dream Gallery 📸',
+          msg:'আমাদের সুন্দর মুহূর্তগুলো এখানে সাজিয়ে রাখো। প্রতিটি ছবি আমাদের ভালোবাসার সাক্ষী হয়ে থাকবে।',
+          quote:'“প্রতিটি ছবিই এক একটি না বলা ভালোবাসার গল্প।” 📸❤️', hasGallery:true },
+        { id:13, theme:'t-rosegold', kicker:'STEP 13 • FOREVER YOURS', mini:'Forever In My Heart ♾️', emojis:'♾️ ❤️‍🔥 🌹 ✨ 💝', emblem:'♾️',
+          title:'Forever In My Heart ♾️',
+          msg:'সময় বদলাবে, দিন বদলাবে, কিন্তু তোমার জন্য আমার এই সুন্দর অনুভূতিগুলো আমি যত্ন করে রাখতে চাই।',
+          quote:'“সব বদলে গেলেও, আমার হৃদয়ে তোমার জায়গাটি চিরকাল একই থাকবে।” ♾️' },
+        { id:14, theme:'t-violet', kicker:'STEP 14 • SPECIAL NOTE', mini:'One Special Message 💌', emojis:'💌 🌹 🥹 💗 ✨', emblem:'💌',
+          title:'One Special Message 💌',
+          msg:'Fariya, তুমি জানো? তোমাকে ভালোবাসার জন্য আমার কোনো বিশেষ দিনের প্রয়োজন হয় না। প্রতিদিনই তোমাকে নতুন করে ভালো লাগতে পারে। তুমি আমার কাছে অনেক বেশি মূল্যবান।',
+          quote:'“প্রতিটি দিনই আমার কাছে ভালোবাসা দিবস, যখন তুমি আমার মনে থাকো।” 💌' },
+        { id:15, theme:'t-finale', kicker:'STEP 15 • GRAND FINALE', mini:'My Final Love Surprise ❤️👑', emojis:'👑 ❤️ 🌹 ✨ 🦋 💍', emblem:'👑',
+          title:'FARIYA, I LOVE YOU! ❤️', isFinale:true }
+      ];
+
+      /* IndexedDB for Gallery */
+      const DB_NAME = 'FariyaMemoriesDB', STORE = 'photos';
+      let dbRef = null;
+      function openDB() {
+        return new Promise((res) => {
+          if (!('indexedDB' in window)) return res(null);
+          const req = indexedDB.open(DB_NAME, 1);
+          req.onupgradeneeded = (e) => {
+            if (!e.target.result.objectStoreNames.contains(STORE)) e.target.result.createObjectStore(STORE, { keyPath:'id', autoIncrement:true });
+          };
+          req.onsuccess = (e) => { dbRef = e.target.result; res(dbRef); };
+          req.onerror = () => res(null);
+        });
+      }
+      async function getPhotos() {
+        const db = dbRef || await openDB(); if (!db) return [];
+        return new Promise((res) => {
+          const req = db.transaction(STORE,'readonly').objectStore(STORE).getAll();
+          req.onsuccess = () => res(req.result || []); req.onerror = () => res([]);
+        });
+      }
+      async function addPhoto(dataUrl, caption) {
+        const db = dbRef || await openDB(); if (!db) return;
+        return new Promise((res) => {
+          const tx = db.transaction(STORE,'readwrite');
+          tx.objectStore(STORE).add({ dataUrl, caption, ts:Date.now() });
+          tx.oncomplete = () => res(true); tx.onerror = () => res(false);
+        });
+      }
+      async function delPhoto(id) {
+        const db = dbRef || await openDB(); if (!db) return;
+        return new Promise((res) => {
+          const tx = db.transaction(STORE,'readwrite');
+          tx.objectStore(STORE).delete(id);
+          tx.oncomplete = () => res(true); tx.onerror = () => res(false);
+        });
+      }
+      function compressImg(file) {
+        return new Promise((res, rej) => {
+          const r = new FileReader();
+          r.onload = (ev) => {
+            const img = new Image();
+            img.onload = () => {
+              const maxW = 900; let w = img.width, h = img.height;
+              if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+              const c = document.createElement('canvas'); c.width = w; c.height = h;
+              c.getContext('2d').drawImage(img, 0, 0, w, h);
+              res(c.toDataURL('image/jpeg', 0.82));
+            };
+            img.onerror = rej; img.src = ev.target.result;
+          };
+          r.onerror = rej; r.readAsDataURL(file);
+        });
+      }
+
+      /* Music Player */
+      const customAudio = document.getElementById('customAudio');
+      const musicToggleBtn = document.getElementById('musicToggleBtn');
+      const musicOnOffBtn = document.getElementById('musicOnOffBtn');
+      const musicDrawerBtn = document.getElementById('musicDrawerBtn');
+      const musicDrawer = document.getElementById('musicDrawer');
+      const volumeSlider = document.getElementById('volumeSlider');
+      const audioUploadInput = document.getElementById('audioUploadInput');
+      const musicTrackName = document.getElementById('musicTrackName');
+
+      let hasCustom = false, actx = null, gainNode = null, synthInt = null, isPlaying = false;
+      const chords = [[293.66,369.99,440,554.37],[246.94,293.66,369.99,440],[196,246.94,293.66,369.99],[220,277.18,329.63,440]];
+      let ci = 0, ni = 0;
+
+      function playChime(f) {
+        if (!actx || !gainNode) return;
+        const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(f, t);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.22, t + 0.08);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 2.0);
+        o.connect(g); g.connect(gainNode); o.start(t); o.stop(t + 2.1);
+      }
+      function startSynth() {
+        if (!actx) {
+          const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+          actx = new AC(); gainNode = actx.createGain();
+          gainNode.gain.value = state.volume * 0.45; gainNode.connect(actx.destination);
+        }
+        if (actx.state === 'suspended') actx.resume();
+        clearInterval(synthInt);
+        synthInt = setInterval(() => {
+          if (!isPlaying || hasCustom) return;
+          playChime(chords[ci][ni]);
+          if (++ni >= chords[ci].length) { ni = 0; ci = (ci + 1) % chords.length; }
+        }, 600);
+      }
+      function updateMusicUI() {
+        musicToggleBtn.classList.toggle('active', isPlaying);
+        musicToggleBtn.textContent = isPlaying ? '🔊' : '🎵';
+        musicOnOffBtn.textContent = isPlaying ? 'Music: ON' : 'Music: OFF';
+      }
+      function startMusic() {
+        isPlaying = true; state.musicEnabled = true; saveState();
+        if (hasCustom) { clearInterval(synthInt); customAudio.volume = state.volume; customAudio.play().catch(()=>{}); }
+        else startSynth();
+        updateMusicUI();
+      }
+      function stopMusic() {
+        isPlaying = false; state.musicEnabled = false; saveState();
+        customAudio.pause(); clearInterval(synthInt); updateMusicUI();
+      }
+      const toggleMusic = () => isPlaying ? stopMusic() : startMusic();
+      musicToggleBtn.addEventListener('click', toggleMusic);
+      musicOnOffBtn.addEventListener('click', toggleMusic);
+      musicDrawerBtn.addEventListener('click', () => musicDrawer.classList.toggle('open'));
+
+      volumeSlider.value = state.volume;
+      volumeSlider.addEventListener('input', (e) => {
+        state.volume = parseFloat(e.target.value); customAudio.volume = state.volume;
+        if (gainNode && actx) gainNode.gain.setTargetAtTime(state.volume * 0.45, actx.currentTime, 0.05);
+        saveState();
+      });
+      audioUploadInput.addEventListener('change', (e) => {
+        const f = e.target.files[0]; if (!f) return;
+        customAudio.src = URL.createObjectURL(f); hasCustom = true;
+        musicTrackName.textContent = '🎶 ' + f.name; startMusic();
+        showToast('পছন্দের গান চালু হয়েছে! 🎵❤️');
+      });
+
+      /* Ambient Hearts, Petals, Butterflies & Golden Heart Explosion */
+      const ambientLayer = document.getElementById('ambientLayer');
+      const fxCanvas = document.getElementById('fxCanvas');
+      const fxCtx = fxCanvas.getContext('2d');
+      let fxList = [], fxActive = false;
+      const resize = () => { fxCanvas.width = window.innerWidth; fxCanvas.height = window.innerHeight; };
+      window.addEventListener('resize', resize); resize();
+
+      const hearts = ['❤️','💗','💕','💖','✨','💞'], petals = ['🌹','🌸','🌷','✨'];
+      setInterval(() => {
+        if (document.hidden || ambientLayer.childElementCount > 17) return;
+        const el = document.createElement('span');
+        const r = Math.random();
+        if (r < 0.2) {
+          el.className = 'p-butterfly'; el.textContent = '🦋';
+          el.style.top = (30 + Math.random() * 55) + 'vh';
+          el.style.fontSize = (18 + Math.random() * 10) + 'px';
+          el.style.animationDuration = (7 + Math.random() * 3) + 's';
+        } else if (r < (state.step === 15 ? 0.65 : 0.48)) {
+          el.className = 'p-petal'; el.textContent = petals[Math.floor(Math.random() * petals.length)];
+          el.style.left = Math.random() * 100 + 'vw'; el.style.fontSize = (14 + Math.random() * 11) + 'px';
+          el.style.setProperty('--dx', (Math.random() * 80 - 40) + 'px');
+          el.style.setProperty('--rot', (Math.random() * 340) + 'deg');
+          el.style.animationDuration = (5.5 + Math.random() * 3.5) + 's';
+        } else {
+          el.className = 'p-heart'; el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+          el.style.left = Math.random() * 100 + 'vw'; el.style.fontSize = (13 + Math.random() * 13) + 'px';
+          el.style.setProperty('--dx', (Math.random() * 65 - 32) + 'px');
+          el.style.setProperty('--rot', (Math.random() * 36 - 18) + 'deg');
+          el.style.animationDuration = (6 + Math.random() * 4) + 's';
+        }
+        ambientLayer.appendChild(el);
+        el.addEventListener('animationend', () => el.remove());
+      }, 620);
+
+      function triggerGoldenExplosion() {
+        const cols = ['#ffd166', '#ff4d94', '#ff1e56', '#ffc2dc', '#f0b7a4', '#ffffff'];
+        const cx = fxCanvas.width / 2, cy = fxCanvas.height * 0.44;
+        for (let i = 0; i < 95; i++) {
+          const ang = Math.random() * Math.PI * 2, spd = 2.4 + Math.random() * 7.5;
+          fxList.push({
+            x: cx, y: cy, vx: Math.cos(ang)*spd, vy: Math.sin(ang)*spd - 2.3,
+            size: 6 + Math.random() * 9, color: cols[Math.floor(Math.random()*cols.length)],
+            alpha: 1, heart: Math.random() < 0.65, rot: Math.random()*Math.PI*2, vRot: (Math.random()-.5)*.14
+          });
+        }
+        if (!fxActive) { fxActive = true; requestAnimationFrame(drawFx); }
+      }
+      function drawFx() {
+        fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+        fxList = fxList.filter(p => p.alpha > 0.02);
+        for (const p of fxList) {
+          p.x += p.vx; p.y += p.vy; p.vy += 0.11; p.vx *= 0.99; p.rot += p.vRot; p.alpha -= 0.011;
+          fxCtx.save(); fxCtx.translate(p.x, p.y); fxCtx.rotate(p.rot);
+          fxCtx.globalAlpha = Math.max(0, p.alpha); fxCtx.fillStyle = p.color;
+          if (p.heart) {
+            const s = p.size * 0.55;
+            fxCtx.beginPath(); fxCtx.moveTo(0, s);
+            fxCtx.bezierCurveTo(-s*1.4, -s*.4, -s*.8, -s*1.6, 0, -s*.7);
+            fxCtx.bezierCurveTo(s*.8, -s*1.6, s*1.4, -s*.4, 0, s); fxCtx.fill();
+          } else {
+            fxCtx.fillRect(-p.size/2, -p.size/4, p.size, p.size*.5);
+          }
+          fxCtx.restore();
+        }
+        if (fxList.length) requestAnimationFrame(drawFx);
+        else { fxActive = false; fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height); }
+      }
+
+      /* UI Render */
+      const stage = document.getElementById('stage'), prevBtn = document.getElementById('prevBtn'),
+            nextBtn = document.getElementById('nextBtn'), bottomNav = document.getElementById('bottomNav'),
+            progressFill = document.getElementById('progressFill'), stepCounter = document.getElementById('stepCounter'),
+            stepTitleMini = document.getElementById('stepTitleMini');
+
+      function showToast(msg) {
+        const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+        clearTimeout(t._id); t._id = setTimeout(() => t.classList.remove('show'), 2600);
+      }
+      const esc = (s) => s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+      async function renderGallery(grid) {
+        const items = await getPhotos(); grid.innerHTML = '';
+        if (!items.length) {
+          grid.style.display = 'block';
+          grid.innerHTML = `<div class="empty-memory"><div style="font-size:2.2rem;animation:heartbeat 1.3s infinite;">💖 👑 💖</div><div style="font-size:.85rem;color:var(--soft-pink);">এখনো কোনো ছবি যোগ করা হয়নি।<br/>আমাদের প্রিয় ছবিগুলো এখানে সাজিয়ে রাখো! 📸</div></div>`;
+          return;
+        }
+        grid.style.display = 'grid';
+        items.forEach((it) => {
+          const c = document.createElement('div'); c.className = 'memory-card';
+          c.innerHTML = `<button class="memory-del" title="Delete">✕</button><img src="${it.dataUrl}" alt="Memory" /><span class="memory-heart">💖</span><div class="memory-cap">${esc(it.caption||'আমাদের প্রিয় মুহূর্ত ❤️')}</div>`;
+          c.querySelector('.memory-del').addEventListener('click', async () => { await delPhoto(it.id); renderGallery(grid); showToast('ছবিটি সরানো হয়েছে'); });
+          grid.appendChild(c);
+        });
+      }
+
+      async function renderStep() {
+        const d = STEPS[state.step - 1];
+        progressFill.style.width = ((state.step / 15) * 100) + '%';
+        stepCounter.textContent = `STEP ${String(state.step).padStart(2,'0')} / 15`;
+        stepTitleMini.textContent = d.mini;
+
+        if (state.step === 1) bottomNav.style.display = 'none';
+        else { bottomNav.style.display = 'flex'; prevBtn.classList.remove('hidden'); nextBtn.classList.toggle('hidden', state.step === 15); }
+
+        const card = document.createElement('section'); card.className = `step-card ${d.theme}`;
+        let extra = '';
+
+        if (d.hasGift) {
+          extra += `
+            <div class="gift-stage">
+              <button id="giftBtn" class="gift-btn ${state.giftOpened?'opened':'shake'}" aria-label="Open Gift">
+                <div class="gift-lid"></div><div class="gift-body"></div>
+              </button>
+              <div style="font-size:.8rem;color:var(--gold);">${state.giftOpened?'✨ উপহারটি খোলা হয়েছে ✨':'👆 Gift Box-এ ট্যাপ করো, সারপ্রাইজ আছে!'}</div>
+              <div id="giftReveal" class="gift-reveal ${state.giftOpened?'show':''}">
+                🎁💖 <strong>Surprise My Love!</strong><br/>তুমি আমার জীবনের সবচেয়ে সুন্দর উপহারগুলোর একটি। ❤️👑
+              </div>
+            </div>`;
+        }
+        if (d.hasKisses) extra += `<div class="kiss-burst">💋 ❤️ 😘 💖 💋</div>`;
+        if (d.hasPromise) {
+          extra += `<div class="promise-list">
+            <div class="promise-item"><span>👑</span><span>সুখে-দুঃখে সবসময় তোমার হাত ধরে পাশে থাকব।</span></div>
+            <div class="promise-item"><span>💎</span><span>তোমার মন খারাপের সময় মন দিয়ে তোমার কথা শুনব।</span></div>
+            <div class="promise-item"><span>♾️</span><span>তোমার অনুভূতি ও স্বপ্নকে সবসময় সম্মান করব।</span></div>
+          </div>`;
+        }
+        if (d.hasGallery) {
+          extra += `<div class="memory-controls">
+            <input id="capInput" class="caption-input" type="text" placeholder="ছবির নিচে রোমান্টিক ক্যাপশন লিখো..." />
+            <label class="upload-btn"><span>📸 ছবি যোগ করো (একাধিক ছবি দেওয়া যাবে)</span><input id="photoInput" type="file" accept="image/*" multiple hidden /></label>
+          </div><div id="memoryGrid" class="memory-grid"></div>`;
+        }
+
+        if (d.isWelcome) {
+          card.innerHTML = `<div class="emoji-halo">${d.emojis}</div><div class="hero-emblem">${d.emblem}</div>
+            <div class="step-kicker">${d.kicker}</div><h1 class="step-title giant">${d.title}</h1>
+            <p class="step-msg">${d.msg}</p><div class="quote-box">${d.quote}</div>
+            <button id="enterBtn" class="btn-primary">ENTER MY HEART 💗</button>`;
+        } else if (d.isFinale) {
+          let replyHtml = '';
+          if (state.finalReply === 'know') {
+            replyHtml = `<div class="finale-response"><div style="font-size:2rem;">🥰👑❤️</div><p class="step-msg" style="font-size:.96rem;">তাহলে মনে রেখো, আমার রাজকন্যা, তুমি আমার কাছে অনেক অনেক স্পেশাল। ❤️</p></div>`;
+          } else if (state.finalReply === 'more') {
+            replyHtml = `<div class="finale-response"><div style="font-size:2rem;">😘🥹💗</div><p class="step-msg" style="font-size:.96rem;">তুমি আমার হাসির কারণ, আমার মনের প্রশান্তি, আমার সবচেয়ে সুন্দর অনুভূতি। তোমাকে অনেক ভালোবাসি, Fariya! 🥹💗</p></div>`;
+          }
+          card.innerHTML = `<div class="emoji-halo">${d.emojis}</div><div class="hero-emblem" style="font-size:4.1rem;">👑</div>
+            <div class="step-kicker">${d.kicker}</div><h1 class="step-title giant">${d.title}</h1>
+            <p class="step-msg" style="font-size:1.08rem;color:var(--soft-pink);font-weight:600;">তুমি কি জানো, আমার পৃথিবীতে তোমার জায়গাটা কতটা সুন্দর?</p>
+            ${replyHtml}
+            <div class="finale-actions">
+              <button id="yesKnowBtn" class="btn-primary">YES, I KNOW! 🥰</button>
+              <button id="tellMoreBtn" class="btn-soft">TELL ME MORE! 😘</button>
+              <button id="restartBtn" class="btn-soft" style="border-style:dashed;opacity:.88;">🔄 Restart Story</button>
+            </div>`;
+        } else {
+          card.innerHTML = `<div class="emoji-halo">${d.emojis}</div><div class="hero-emblem">${d.emblem}</div>
+            <div class="step-kicker">${d.kicker}</div><h2 class="step-title">${d.title}</h2>
+            <p class="step-msg">${d.msg}</p>${extra}<div class="quote-box">${d.quote}</div>`;
+        }
+
+        stage.innerHTML = ''; stage.appendChild(card);
+
+        if (d.isWelcome) {
+          document.getElementById('enterBtn').addEventListener('click', () => {
+            if (!isPlaying) startMusic();
+            goStep(2);
+          });
+        }
+        if (d.hasGift) {
+          const gb = document.getElementById('giftBtn'), gr = document.getElementById('giftReveal');
+          gb.addEventListener('click', () => {
+            state.giftOpened = true; saveState();
+            gb.classList.remove('shake'); gb.classList.add('opened'); gr.classList.add('show');
+            triggerGoldenExplosion();
+          });
+        }
+        if (d.hasGallery) {
+          const grid = document.getElementById('memoryGrid'), inp = document.getElementById('photoInput'), cap = document.getElementById('capInput');
+          await renderGallery(grid);
+          inp.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files || []); if (!files.length) return;
+            const cText = cap.value.trim() || 'আমাদের স্বপ্নের মুহূর্ত ❤️';
+            showToast('ছবি সেভ হচ্ছে... 📸');
+            for (const f of files) { try { await addPhoto(await compressImg(f), cText); } catch (err) {} }
+            cap.value = ''; inp.value = ''; await renderGallery(grid); showToast('ছবি যুক্ত হয়েছে! 💖');
+          });
+        }
+        if (d.isFinale) {
+          triggerGoldenExplosion();
+          document.getElementById('yesKnowBtn').addEventListener('click', () => {
+            state.finalReply = 'know'; saveState(); renderStep(); triggerGoldenExplosion();
+          });
+          document.getElementById('tellMoreBtn').addEventListener('click', () => {
+            state.finalReply = 'more'; saveState(); renderStep(); triggerGoldenExplosion();
+          });
+          document.getElementById('restartBtn').addEventListener('click', () => {
+            state.step = 1; state.giftOpened = false; state.finalReply = null; saveState(); renderStep();
+          });
+        }
+      }
+
+      function goStep(n) { if (n >= 1 && n <= 15) { state.step = n; saveState(); renderStep(); } }
+      prevBtn.addEventListener('click', () => goStep(state.step - 1));
+      nextBtn.addEventListener('click', () => goStep(state.step + 1));
+
+      const letterModal = document.getElementById('letterModal');
+      document.getElementById('letterBtn').addEventListener('click', () => letterModal.classList.add('open'));
+      document.getElementById('closeLetterBtn').addEventListener('click', () => letterModal.classList.remove('open'));
+      letterModal.addEventListener('click', (e) => { if (e.target === letterModal) letterModal.classList.remove('open'); });
+
+      /* PWA */
+      let deferredPrompt = null; const installBtn = document.getElementById('installBtn');
+      window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'inline-flex'; });
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice;
+        deferredPrompt = null; installBtn.style.display = 'none';
+      });
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+      renderStep(); updateMusicUI();
+      window.addEventListener('load', () => setTimeout(() => document.getElementById('loadingScreen').classList.add('hide'), 1400));
+    })();
+  </script>
+</body>
+</html>
